@@ -199,6 +199,7 @@ class DragonBaseline(NLPAlgorithm):
         self.load_best_model_at_end = True
         self.metric_for_best_model = "loss"
         self.fp16 = False
+        self.create_strided_training_examples = False
 
         # paths for saving the preprocessed data and model checkpoints
         self.nlp_dataset_train_preprocessed_path = Path(workdir / "nlp-dataset-train-preprocessed.json")
@@ -461,6 +462,8 @@ class DragonBaseline(NLPAlgorithm):
             ])
         if self.fp16:
             cmd.append("--fp16")
+        if self.create_strided_training_examples:
+            cmd.append("--create_strided_training_examples")
 
         cmd = [str(arg) for arg in cmd]
         print("Training command:")

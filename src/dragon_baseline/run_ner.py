@@ -31,7 +31,7 @@ import datasets
 import evaluate
 import numpy as np
 import transformers
-from datasets import ClassLabel, load_dataset, load_from_disk
+from datasets import ClassLabel, Dataset, load_dataset, load_from_disk
 from transformers import (AutoConfig, AutoModelForTokenClassification,
                           AutoTokenizer, DataCollatorForTokenClassification,
                           HfArgumentParser, PretrainedConfig,
@@ -169,6 +169,15 @@ class DataTrainingArguments:
                 "Whether to pad all samples to model maximum sentence length. "
                 "If False, will pad the samples dynamically when batching to the maximum length in the batch. More "
                 "efficient on GPU but very bad for TPU."
+            )
+        },
+    )
+    create_strided_training_examples: bool = field(
+        default=False,
+        metadata={
+            "help": (
+                "Whether to create multiple training examples from a single example by splitting the text into "
+                "multiple segments with overlap, when a sample is longer than the maximum model sequence length."
             )
         },
     )
@@ -501,6 +510,83 @@ def main():
         tokenized_inputs["labels"] = labels
         return tokenized_inputs
 
+    def create_segments_and_align_labels(
+        dataset: datasets.Dataset,
+        tokenizer: PreTrainedTokenizerFast,
+        max_seq_length: int,
+        text_column_name: str,
+        label_column_name: str,
+    ) -> datasets.Dataset:
+        """
+        Tokenize all texts and align the labels with them.
+        For text longer than the max_seq_length, we create multiple segments with overlap.
+        """
+        # Lists to hold the new dataset entries
+        all_input_ids = []
+        all_attention_masks = []
+        all_labels = []
+        step_size = max_seq_length // 2  # Stride is half of the max sequence length
+
+        for example in dataset:
+            text = example[text_column_name]
+            label = example[label_column_name]
+
+            # Tokenize the text without truncation to handle full length
+            tokenized_input = tokenizer(
+                text,
+                add_special_tokens=True,
+                truncation=False,
+                padding=padding,
+                is_split_into_words=True,
+            )
+
+            word_ids = tokenized_input.word_ids()
+            input_ids = tokenized_input.input_ids
+            attention_mask = tokenized_input.attention_mask
+            sample_length = len(input_ids)
+            # Calculate the total number of segments we can extract with the given stride
+            for start_index in range(0, sample_length, step_size):
+                end_index = start_index + max_seq_length
+                if end_index > sample_length:
+                    end_index = sample_length
+                    start_index = max(0, end_index - max_seq_length)
+
+                # Slice the model input according to start and end indices
+                segment_word_ids = word_ids[start_index:end_index]
+                segment_input_ids = input_ids[start_index:end_index]
+                segment_attention_mask = attention_mask[start_index:end_index]
+
+                previous_word_idx = None
+                segment_label_ids = []
+                for word_idx in segment_word_ids:
+                    # Special tokens have a word id that is None. We set the label to -100 so they are automatically
+                    # ignored in the loss function.
+                    if word_idx is None:
+                        segment_label_ids.append(-100)
+                    # We set the label for the first token of each word.
+                    elif word_idx != previous_word_idx:
+                        segment_label_ids.append(label_to_id[label[word_idx]])
+                    # For the other tokens in a word, we set the label to either the current label or -100, depending on
+                    # the label_all_tokens flag.
+                    else:
+                        if data_args.label_all_tokens:
+                            segment_label_ids.append(b_to_i_label[label_to_id[label[word_idx]]])
+                        else:
+                            segment_label_ids.append(-100)
+                    previous_word_idx = word_idx
+
+                all_input_ids.append(segment_input_ids)
+                all_attention_masks.append(segment_attention_mask)
+                all_labels.append(segment_label_ids)
+
+        # Create a new dataset from all collected segments
+        new_data = {
+            "input_ids": all_input_ids,
+            "attention_mask": all_attention_masks,
+            "labels": all_labels
+        }
+        return Dataset.from_dict(new_data)
+
     if training_args.do_train:
         if "train" not in raw_datasets:
             raise ValueError("--do_train requires a train dataset")
@@ -509,13 +595,22 @@ def main():
             max_train_samples = min(len(train_dataset), data_args.max_train_samples)
             train_dataset = train_dataset.select(range(max_train_samples))
         with training_args.main_process_first(desc="train dataset map pre-processing"):
-            train_dataset = train_dataset.map(
-                tokenize_and_align_labels,
-                batched=True,
-                num_proc=data_args.preprocessing_num_workers,
-                load_from_cache_file=not data_args.overwrite_cache,
-                desc="Running tokenizer on train dataset",
-            )
+            if data_args.create_strided_training_examples:
+                train_dataset = create_segments_and_align_labels(
+                    dataset=train_dataset,
+                    tokenizer=tokenizer,
+                    max_seq_length=data_args.max_seq_length,
+                    text_column_name=data_args.text_column_name,
+                    label_column_name=data_args.label_column_name,
+                )
+            else:
+                train_dataset = train_dataset.map(
+                    tokenize_and_align_labels,
+                    batched=True,
+                    num_proc=data_args.preprocessing_num_workers,
+                    load_from_cache_file=not data_args.overwrite_cache,
+                    desc="Running tokenizer on train dataset",
+                )
 
     if training_args.do_eval:
         if "validation" not in raw_datasets:
