@@ -448,8 +448,6 @@ class DragonBaseline(NLPAlgorithm):
             cmd.extend([
                 "--label_column_names", ",".join(label_names),
             ])
-            if self.create_strided_training_examples:
-                cmd.append("--create_strided_training_examples")
         else:
             cmd.extend([
                 "--label_column_name", self.task.target.label_name,
@@ -458,6 +456,9 @@ class DragonBaseline(NLPAlgorithm):
             cmd.extend([
                 "--text_column_delimiter", tokenizer.sep_token,
             ])
+
+            if self.create_strided_training_examples:
+                cmd.append("--create_strided_training_examples")
         if self.metric_for_best_model is not None:
             cmd.extend([
                 "--metric_for_best_model", str(self.metric_for_best_model),
