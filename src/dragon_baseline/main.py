@@ -175,7 +175,7 @@ def balance_negative_samples(df: pd.DataFrame, label_name: str, seed: int) -> pd
 
 
 class DragonBaseline(NLPAlgorithm):
-    def __init__(self, input_path: Path = Path("/input"), output_path: Path = Path("/output"), workdir: Path = Path("/opt/app"), model_name: Union[str, Path] = "joeranbosma/dragon-roberta-large-domain-specific", **kwargs):
+    def __init__(self, input_path: Path = Path("/input"), output_path: Path = Path("/output"), workdir: Path = Path("/opt/app"), model_name: Union[str, Path] = "distilbert-base-multilingual-cased", **kwargs):
         """
         Baseline implementation for the DRAGON Challenge (https://dragon.grand-challenge.org/).
         This baseline uses the HuggingFace Transformers library (https://huggingface.co/transformers/).
