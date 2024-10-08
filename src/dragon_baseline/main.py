@@ -448,6 +448,8 @@ class DragonBaseline(NLPAlgorithm):
             cmd.extend([
                 "--label_column_names", ",".join(label_names),
             ])
+            if self.create_strided_training_examples:
+                cmd.append("--create_strided_training_examples")
         else:
             cmd.extend([
                 "--label_column_name", self.task.target.label_name,
@@ -462,8 +464,6 @@ class DragonBaseline(NLPAlgorithm):
             ])
         if self.fp16:
             cmd.append("--fp16")
-        if self.create_strided_training_examples:
-            cmd.append("--create_strided_training_examples")
 
         cmd = [str(arg) for arg in cmd]
         print("Training command:")
