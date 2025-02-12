@@ -17,8 +17,8 @@ RUN python -m pip install --user -U pip && python -m pip install --user pip-tool
 
 
 # Install the requirements
-COPY --chown=user:user requirements.in /opt/app/
-RUN python -m pip install --user -r requirements.in
+COPY --chown=user:user requirements.txt /opt/app/
+RUN python -m pip install --user -r requirements.txt
 
 # Download the model, tokenizer and metrics
 RUN mkdir -p /opt/app/models
