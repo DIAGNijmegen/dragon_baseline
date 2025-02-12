@@ -1,0 +1,9 @@
+torch
+transformers>=4.48.0
+datasets
+evaluate
+accelerate
+xformers
+pandas
+seqeval
+evalutils==0.5.0

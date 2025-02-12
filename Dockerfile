@@ -1,4 +1,4 @@
-FROM pytorch/pytorch:2.0.1-cuda11.7-cudnn8-runtime
+FROM pytorch/pytorch:2.6.0-cuda12.4-cudnn9-runtime
 
 RUN groupadd -r user && useradd -m --no-log-init -r -g user user
 
@@ -17,8 +17,8 @@ RUN python -m pip install --user -U pip && python -m pip install --user pip-tool
 
 
 # Install the requirements
-COPY --chown=user:user requirements.txt /opt/app/
-RUN python -m pip install --user -r requirements.txt
+COPY --chown=user:user requirements.in /opt/app/
+RUN python -m pip install --user -r requirements.in
 
 # Download the model, tokenizer and metrics
 RUN mkdir -p /opt/app/models
