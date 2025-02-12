@@ -6,4 +6,4 @@ accelerate
 xformers
 pandas
 seqeval
-evalutils==0.5.0
+evalutils==0.4.2
