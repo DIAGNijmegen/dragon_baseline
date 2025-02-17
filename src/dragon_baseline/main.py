@@ -175,7 +175,7 @@ def balance_negative_samples(df: pd.DataFrame, label_name: str, seed: int) -> pd
 
 
 class DragonBaseline(NLPAlgorithm):
-    def __init__(self, input_path: Path = Path("/input"), output_path: Path = Path("/output"), workdir: Path = Path("/opt/app"), model_name: Union[str, Path] = "joeranbosma/dragon-roberta-large-domain-specific", **kwargs):
+    def __init__(self, input_path: Path = Path("/input"), output_path: Path = Path("/output"), workdir: Path = Path("/opt/app"), model_name: Union[str, Path] = "distilbert-base-multilingual-cased", **kwargs):
         """
         Baseline implementation for the DRAGON Challenge (https://dragon.grand-challenge.org/).
         This baseline uses the HuggingFace Transformers library (https://huggingface.co/transformers/).
@@ -194,7 +194,7 @@ class DragonBaseline(NLPAlgorithm):
         self.gradient_checkpointing = False
         self.max_seq_length = 512
         self.learning_rate = 1e-5
-        self.num_train_epochs = 5
+        self.num_train_epochs = 1
         self.warmup_ratio = 0.1
         self.load_best_model_at_end = True
         self.metric_for_best_model = "loss"
@@ -425,7 +425,7 @@ class DragonBaseline(NLPAlgorithm):
             "--truncation_side", self.task.recommended_truncation_side,
             "--load_best_model_at_end", self.load_best_model_at_end,
             "--save_strategy", "epoch",
-            "--evaluation_strategy", "epoch",
+            "--eval_strategy", "epoch",
             "--per_device_train_batch_size", self.per_device_train_batch_size,
             "--gradient_accumulation_steps", self.gradient_accumulation_steps,
             "--gradient_checkpointing", self.gradient_checkpointing,
