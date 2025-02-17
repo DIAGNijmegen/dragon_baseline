@@ -1,11 +1,17 @@
 # DRAGON Development Guide
 
-Submissions to the DRAGON challenge need to generate predictions for the test set of each task. The predictions should be stored in a specific format, as described in the [dataset convention](/documentation/dataset_convention.md). The predictions are then evaluated on the Grand Challenge platform. To generate the predictions, examples from the training set can be used. These examples can be used to fine-tune a model, provide few-shot examples, or be used in any other way to generate predictions for the test set. For model selection, the validation set can be used. To facilitate the development of algorithms, we provide a [submission template](https://github.com/DIAGNijmegen/dragon_submission) that solves each task using a BERT-like model, and we provide synthetic datasets that can be used for debugging and testing.
+Submissions to the DRAGON challenge need to generate predictions for the test set of each task. The predictions should be stored in a specific format, as described in the [dataset convention](/documentation/dataset_convention.md). The predictions are then evaluated on the Grand Challenge platform. To generate the predictions, examples from the training set can be used. These examples can be used to fine-tune a model, provide few-shot examples, or be used in any other way to generate predictions for the test set. For model selection, the validation set can be used. 
+
+To facilitate the development of algorithms, we provide a [submission template](https://github.com/DIAGNijmegen/dragon_submission) that solves each task using a BERT-like model. Alternatively, when using generative models, this template using LLMs (Gemma2 using the Ollama framework) can be used as starting point: [dragon_submission_llm_extractinator_gemma2](https://github.com/DIAGNijmegen/dragon_submission_llm_extractinator_gemma2).
+
+Additionally, we provide synthetic datasets that can be used for debugging and testing.
 
 Note: the validation set may not be used as training data, such that the robustness of the algorithm can be assessed through the cross-validation setup of the DRAGON benchmark.
 
 ## Format for submissions
-Submissions to the DRAGON challenge are to be made as Docker containers. Thse Docker containers must encapsulate all **training resources** (e.g., pretrained model weights, fine-tuning strategy, and/or prompting strategy with few-shot examples) and the components needed to **generate predictions** for the test cases. The flow for submissions is shown below. Technically, these containers are [Grand Challenge (GC) algorithms](https://grand-challenge.org/documentation/algorithms/) with standardised input and output data handling.
+Submissions to the DRAGON challenge are to be made as Docker containers. Thse Docker containers must encapsulate all **training resources** (e.g., pretrained model weights, fine-tuning strategy, and/or prompting strategy with few-shot examples) and the components needed to **generate predictions** for the test cases. The flow for submissions is shown below. Technically, these containers are [Grand Challenge (GC) algorithms](https://grand-challenge.org/documentation/algorithms/) with standardised input and output data handling. We highly recommend  the general tutorial on creating
+Grand Challenge Algorithms: <a href="https://grand-challenge.org/documentation/create-your-own-algorithm/" target="_blank">https://grand-challenge.org/documentation/create-your-own-algorithm/</a>.
+
 
 ![DRAGON_benchmark_flowdiagram](DRAGON_benchmark_flowdiagram.png)
 *Figure: Evaluation method for the DRAGON benchmark. Challenge participants must provide all resources necessary to process the reports and generate predictions for the test set. Any processing of reports is performed on the Grand Challenge platform, without any interaction with the participant.*
@@ -31,7 +37,16 @@ Before implementing your algorithm using this template, we recommend to test whe
 
 
 ### Working in Docker
-If you prefer development in Docker, start with building the Docker container:
+You must have
+<a href="https://docs.docker.com/get-docker/" target="_blank">Docker</a>
+installed and running on your system for the following steps to work. If
+you are using Windows, we recommend installing
+<a href="https://docs.microsoft.com/en-us/windows/wsl/install" target="_blank">Windows Subsystem for Linux 2 (WSL2)</a>. For more
+details, you can watch the
+<a href="https://www.youtube.com/watch?v=PdxXlZJiuxA" target="_blank">official tutorial by Microsoft for installing WSL 2 with
+GPU support</a>.
+
+Once Docker is installed, and start with building the Docker container:
 
 ```bash
 cd ~/repos/dragon_submission
@@ -47,14 +62,18 @@ cd ~/repos/dragon_submission
 ./test.sh
 ```
 
+Note: testing also runs a build, so running the build command separately is optional (if you are certain that everything is set up correctly).
+
+Testing involves running your algorithm on nine synthetic datasets provided in the `./test-input/` folder. It will then check the test predictions produced by your algorithm against the labels and display the performance. Since training is typically not deterministic (even with the same random seed across different hardware), we don't compare against pre-computed test predictions. Instead, we check if all training runs perform better than random guessing. If all tests have been completed successfully, you're good to go!
+
 If you want to adapt the hardware (e.g., run on CPU instead of GPU, or allow more/less RAM, CPU cores, etc.) you can adapt the `test.sh` file.
 
 
 ### Working in an IDE (e.g., Visual Studio Code)
-Alternatively, you can develop outside a Docker container. This introduces more differences between the development environment and the submission environment on Grand Challenge, but also allows for more flexibility for interaction. For this route, we strongly recommend that you install everyting in a virtual environment! Pip or anaconda are both fine. Use a recent version of Python! 3.9 or newer is guaranteed to work! For the sake of this tutorial, we will use a conda environment with Python 3.10.
+Alternatively, you can develop outside a Docker container. This introduces more differences between the development environment and the submission environment on Grand Challenge, but may better fit your development preferences. For this, we strongly recommend that you install everyting in a virtual environment! Pip or anaconda are both fine. Use a recent version of Python! 3.9 or newer is guaranteed to work! For the sake of this tutorial, we will use a conda environment with Python 3.11.
 
 ```bash
-conda create --name=dragon_submission python=3.10
+conda create --name=dragon_submission python=3.11
 conda activate dragon_submission
 cd ~/repos/dragon_submission
 pip install -r requirements.txt
@@ -73,11 +92,17 @@ If this was all successful, you can open the repository in an IDE and select the
 To validate the setup works as intended, run the `test.py` script to train on the synthetic datasets. This will fine-tune the `distilbert-base-multilingual-cased` for each of the nine synthetic debugging datasets, so this can take a while.
 
 
-## Developing
-After the setup above you're good to go! The most logical place to start adapting is the `process.py` script.
+## Developing Your Own Solution
+After the setup above you're good to go to implement your own AI algorithm! The most logical place to start adapting is the `process.py` script, there are two example alterations provided there too. Any additional imported packages should be added to `./requirements.txt`, and any additional files and folders should be explicitly copied through commands in the `./Dockerfile`. 
 
+To update your algorithm on Grand Challenge, you can test your new Docker container, after which you can update the forked repository and **tag** it (following the instructions
+<a href="https://grand-challenge.org/documentation/linking-a-github-repository-to-your-algorithm/" target="_blank">here</a>).
+
+Please note, you only have internet access when **building** the Docker container on Grand Challenge, not while generating predictions for the test sets. Therefore all necessary model weights and resources must be encapsulated in your container image apriori. Using an API to generate predictions is not possible. You can test whether your algorithm runs without internet using the `--network=none` option of `docker run`.
+
+If anything is unclear or something doesn't work for you, please feel free to
+<a href="https://github.com/DIAGNijmegen/dragon_submission/issues" target="_blank">make an issue in the DRAGON submission GitHub</a>.
+
+
+## Submitting Your Algorithm
 For more information about submission to the DRAGON benchmark, please check out the [algorithm submission guide](https://dragon.grand-challenge.org/submission/).
-
-
-### Bringing in your own data
-To format your own dataset for usage with the DRAGON benchmark, check out the [dataset convention](/documentation/dataset_convention.md).

@@ -68,6 +68,10 @@ You can use the algorithm on Grand Challenge or locally. Either way, the algorit
 If you prefer to perform these steps on your own hardware, please follow the steps in "How to get started as AI developer?" to learn how to set this up. You can find the GitHub repository of submissions on the leaderboard under the GitHub icon [PENDING].
 
 
+## Bringing in your own data
+To format your own dataset for usage with the algorithms from the DRAGON challenge, check out the [dataset convention](/documentation/dataset_convention.md).
+
+
 ## Where does the DRAGON baseline perform well and where does it not perform?
 Pending evaluation on the DRAGON benchmark.
 
