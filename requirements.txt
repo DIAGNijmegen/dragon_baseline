@@ -14,13 +14,28 @@ aiohttp==3.11.12
     #   fsspec
 aiosignal==1.3.2
     # via aiohttp
+arrow==1.3.0
+    # via cookiecutter
 attrs==25.1.0
     # via aiohttp
+binaryornot==0.4.4
+    # via cookiecutter
+build==1.2.2.post1
+    # via pip-tools
 certifi==2025.1.31
     # via requests
+chardet==5.2.0
+    # via binaryornot
 charset-normalizer==3.4.1
     # via requests
-datasets==3.2.0
+click==8.1.8
+    # via
+    #   cookiecutter
+    #   evalutils
+    #   pip-tools
+cookiecutter==2.6.0
+    # via evalutils
+datasets==3.3.0
     # via
     #   -r requirements.in
     #   evaluate
@@ -31,7 +46,7 @@ dill==0.3.8
     #   multiprocess
 evaluate==0.4.3
     # via -r requirements.in
-evalutils==0.5.0
+evalutils==0.4.2
     # via -r requirements.in
 filelock==3.17.0
     # via
@@ -43,7 +58,7 @@ frozenlist==1.5.0
     # via
     #   aiohttp
     #   aiosignal
-fsspec[http]==2024.9.0
+fsspec[http]==2024.12.0
     # via
     #   datasets
     #   evaluate
@@ -60,12 +75,20 @@ idna==3.10
     # via
     #   requests
     #   yarl
+imageio[tifffile]==2.37.0
+    # via evalutils
 jinja2==3.1.5
-    # via torch
+    # via
+    #   cookiecutter
+    #   torch
 joblib==1.4.2
     # via scikit-learn
+markdown-it-py==3.0.0
+    # via rich
 markupsafe==3.0.2
     # via jinja2
+mdurl==0.1.2
+    # via markdown-it-py
 mpmath==1.3.0
     # via sympy
 multidict==6.1.0
@@ -78,16 +101,18 @@ multiprocess==0.70.16
     #   evaluate
 networkx==3.4.2
     # via torch
-numpy==2.2.2
+numpy==2.2.3
     # via
     #   accelerate
     #   datasets
     #   evaluate
     #   evalutils
+    #   imageio
     #   pandas
     #   scikit-learn
     #   scipy
     #   seqeval
+    #   tifffile
     #   transformers
     #   xformers
 nvidia-cublas-cu12==12.4.5.8
@@ -127,6 +152,7 @@ nvidia-nvtx-cu12==12.4.127
 packaging==24.2
     # via
     #   accelerate
+    #   build
     #   datasets
     #   evaluate
     #   huggingface-hub
@@ -136,21 +162,37 @@ pandas==2.2.3
     #   -r requirements.in
     #   datasets
     #   evaluate
+    #   evalutils
+pillow==11.1.0
+    # via imageio
+pip-tools==7.4.1
+    # via evalutils
 propcache==0.2.1
     # via
     #   aiohttp
     #   yarl
-psutil==6.1.1
+psutil==7.0.0
     # via accelerate
 pyarrow==19.0.0
     # via datasets
+pygments==2.19.1
+    # via rich
+pyproject-hooks==1.2.0
+    # via
+    #   build
+    #   pip-tools
 python-dateutil==2.9.0.post0
-    # via pandas
+    # via
+    #   arrow
+    #   pandas
+python-slugify==8.0.4
+    # via cookiecutter
 pytz==2025.1
     # via pandas
 pyyaml==6.0.2
     # via
     #   accelerate
+    #   cookiecutter
     #   datasets
     #   huggingface-hub
     #   transformers
@@ -158,10 +200,13 @@ regex==2024.11.6
     # via transformers
 requests==2.32.3
     # via
+    #   cookiecutter
     #   datasets
     #   evaluate
     #   huggingface-hub
     #   transformers
+rich==13.9.4
+    # via cookiecutter
 safetensors==0.5.2
     # via
     #   accelerate
@@ -170,18 +215,24 @@ scikit-learn==1.6.1
     # via
     #   evalutils
     #   seqeval
-scipy==1.15.1
+scipy==1.15.2
     # via
     #   evalutils
     #   scikit-learn
 seqeval==1.2.2
     # via -r requirements.in
+simpleitk==2.4.1
+    # via evalutils
 six==1.17.0
     # via python-dateutil
 sympy==1.13.1
     # via torch
+text-unidecode==1.3
+    # via python-slugify
 threadpoolctl==3.5.0
     # via scikit-learn
+tifffile==2025.1.10
+    # via imageio
 tokenizers==0.21.0
     # via transformers
 torch==2.6.0
@@ -199,6 +250,8 @@ transformers==4.48.3
     # via -r requirements.in
 triton==3.2.0
     # via torch
+types-python-dateutil==2.9.0.20241206
+    # via arrow
 typing-extensions==4.12.2
     # via
     #   huggingface-hub
@@ -207,6 +260,8 @@ tzdata==2025.1
     # via pandas
 urllib3==2.3.0
     # via requests
+wheel==0.45.1
+    # via pip-tools
 xformers==0.0.29.post3
     # via -r requirements.in
 xxhash==3.5.0
@@ -215,3 +270,7 @@ xxhash==3.5.0
     #   evaluate
 yarl==1.18.3
     # via aiohttp
+
+# The following packages are considered to be unsafe in a requirements file:
+# pip
+# setuptools
