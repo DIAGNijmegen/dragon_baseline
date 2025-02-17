@@ -17,14 +17,14 @@ RUN python -m pip install --user -U pip && python -m pip install --user pip-tool
 
 
 # Install the requirements
-COPY --chown=user:user requirements.txt /opt/app/
-RUN python -m pip install --user -r requirements.txt
+COPY --chown=user:user requirements.txt .
+RUN python -m pip install --user -r requirements.txt \
+    && rm -rf /home/user/.cache/pip
 
 # Download the model, tokenizer and metrics
-RUN mkdir -p /opt/app/models
-COPY --chown=user:user download_model.py /opt/app/
+COPY --chown=user:user download_model.py .
 RUN python download_model.py --model_name distilbert-base-multilingual-cased
-COPY --chown=user:user download_metrics.py /opt/app/
+COPY --chown=user:user download_metrics.py .
 RUN python download_metrics.py
 
 # Set the environment variables

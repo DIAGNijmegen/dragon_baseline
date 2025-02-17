@@ -7,3 +7,4 @@ if __name__ == "__main__":
     evaluate.load("f1")
     evaluate.load("seqeval")
 
+    print(f"Metrics saved to HuggingFace cache (typically at ~/.cache/huggingface)")
