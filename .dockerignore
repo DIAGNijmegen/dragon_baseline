@@ -1,5 +1,6 @@
 test/
 .git/
+.venv/
 *.tar.gz
 input/
 output/
