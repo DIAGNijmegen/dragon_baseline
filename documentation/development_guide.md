@@ -1,7 +1,11 @@
 # DRAGON Development Guide
 
+Submissions to the DRAGON challenge need to generate predictions for the test set of each task. The predictions should be stored in a specific format, as described in the [dataset convention](/documentation/dataset_convention.md). The predictions are then evaluated on the Grand Challenge platform. To generate the predictions, examples from the training set can be used. These examples can be used to fine-tune a model, provide few-shot examples, or be used in any other way to generate predictions for the test set. For model selection, the validation set can be used. To facilitate the development of algorithms, we provide a [submission template](https://github.com/DIAGNijmegen/dragon_submission) that solves each task using a BERT-like model, and we provide synthetic datasets that can be used for debugging and testing.
+
+Note: the validation set may not be used as training data, such that the robustness of the algorithm can be assessed through the cross-validation setup of the DRAGON benchmark.
+
 ## Format for submissions
-Submissions to the DRAGON challenge are to be made as **training+inference** Docker containers. They are Docker containers that encapsulate the **training resources** (e.g., fine-tuning strategy, pretrained model weights) and the components needed to **generate predictions** for the test cases. The flow for submissions is shown below. Technically, these containers are [Grand Challenge (GC) algorithms](https://grand-challenge.org/documentation/algorithms/) with standardised input and output data handling.
+Submissions to the DRAGON challenge are to be made as Docker containers. Thse Docker containers must encapsulate all **training resources** (e.g., pretrained model weights, fine-tuning strategy, and/or prompting strategy with few-shot examples) and the components needed to **generate predictions** for the test cases. The flow for submissions is shown below. Technically, these containers are [Grand Challenge (GC) algorithms](https://grand-challenge.org/documentation/algorithms/) with standardised input and output data handling.
 
 ![DRAGON_benchmark_flowdiagram](DRAGON_benchmark_flowdiagram.png)
 *Figure: Evaluation method for the DRAGON benchmark. Challenge participants must provide all resources necessary to process the reports and generate predictions for the test set. Any processing of reports is performed on the Grand Challenge platform, without any interaction with the participant.*
