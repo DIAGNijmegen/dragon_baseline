@@ -7,3 +7,4 @@ xformers
 pandas
 seqeval
 evalutils==0.4.2
+scikit-learn==1.5.2

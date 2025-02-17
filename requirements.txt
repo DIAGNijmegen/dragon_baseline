@@ -211,8 +211,9 @@ safetensors==0.5.2
     # via
     #   accelerate
     #   transformers
-scikit-learn==1.6.1
+scikit-learn==1.5.2
     # via
+    #   -r requirements.in
     #   evalutils
     #   seqeval
 scipy==1.15.2
