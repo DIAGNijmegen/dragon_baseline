@@ -175,7 +175,7 @@ def balance_negative_samples(df: pd.DataFrame, label_name: str, seed: int) -> pd
 
 
 class DragonBaseline(NLPAlgorithm):
-    def __init__(self, input_path: Path = Path("/input"), output_path: Path = Path("/output"), workdir: Path = Path("/opt/app"), model_name: Union[str, Path] = "distilbert-base-multilingual-cased", **kwargs):
+    def __init__(self, input_path: Path = Path("/input"), output_path: Path = Path("/output"), workdir: Path = Path("/opt/app"), model_name: Union[str, Path] = "joeranbosma/dragon-roberta-large-domain-specific", **kwargs):
         """
         Baseline implementation for the DRAGON Challenge (https://dragon.grand-challenge.org/).
         This baseline uses the HuggingFace Transformers library (https://huggingface.co/transformers/).
@@ -193,13 +193,13 @@ class DragonBaseline(NLPAlgorithm):
         self.gradient_accumulation_steps = 2
         self.gradient_checkpointing = False
         self.max_seq_length = 512
-        self.learning_rate = 3e-5
-        self.num_train_epochs = 15
+        self.learning_rate = 1e-5
+        self.num_train_epochs = 5
         self.warmup_ratio = 0.1
         self.load_best_model_at_end = True
         self.metric_for_best_model = "loss"
-        self.fp16 = False
-        self.create_strided_training_examples = False
+        self.fp16 = True
+        self.create_strided_training_examples = True
 
         # paths for saving the preprocessed data and model checkpoints
         self.nlp_dataset_train_preprocessed_path = Path(workdir / "nlp-dataset-train-preprocessed.json")
