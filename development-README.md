@@ -32,4 +32,4 @@ AutoPEP8 for formatting (this can be done automatically on save, see e.g. https:
 # Push release to PyPI
 1. Increase version in setup.py, and set below
 2. Build: `python -m build`
-3. Distribute package to PyPI: `python -m twine upload dist/*0.3.1*`
+3. Distribute package to PyPI: `python -m twine upload dist/*0.4.0*`

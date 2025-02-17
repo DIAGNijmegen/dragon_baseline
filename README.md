@@ -21,6 +21,10 @@ We strongly recommend that you install the DRAGON baseline in a virtual environm
 pip install dragon_baseline
 ```
 
+## How to get started as AI developer?
+Please see the [dedicated development guide](documentation/development_guide.md) to get started with creating new solutions!
+
+
 ## What is the DRAGON benchmark?
 
 The DRAGON benchmark serves as an extensive resource for testing and advancing clinical NLP algorithms, particularly in the realm of automated data curation. In the context of medical imaging datasets, data curation involves selecting relevant studies, collecting key measurements, and determining the clinical outcomes as labels. Clinical reports are the primary source for these curation tasks. The DRAGON benchmark aims to catalyze the development of algorithms capable of addressing a broad spectrum of data curation tasks and introduces 28 clinically relevant tasks, as detailed [here](https://dragon.grand-challenge.org/tasks/).
@@ -50,9 +54,6 @@ DRAGON configures its pipeline based on a two-step recipe:
 
 * **Fixed parameters** are not adapted. During development of the DRAGON baseline we identified a robust configuration (that is, certain architecture and training properties) that can simply be used all the time. This includes, for example, the loss function and learning rate.
 * **Rule-based parameters** use the dataset fingerprint to adapt certain segmentation pipeline properties by following hard-coded heuristic rules. For example, the regression target is transformed with a logarithmic function when the skew of the label distribution is more than one.
-
-## How to get started as AI developer?
-Please see the [dedicated development guide](documentation/development_guide.md) to get started with creating new solutions!
 
 ## How to get started to use existing DRAGON algorithms?
 If you want to use an existing algorithm to annotate new data, you need:
