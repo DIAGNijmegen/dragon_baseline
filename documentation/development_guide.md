@@ -55,7 +55,7 @@ cd ~/repos/dragon_submission
 
 If ran successfully, this should result in the Docker container named `joeranbosma/dragon_submission:latest`.
 
-Then, test your setup by training and evaluating on the synthetic datasets. This will fine-tune the `distilbert-base-multilingual-cased` for each of the nine synthetic debugging datasets, so this can take a while. To do so, run:
+Then, test your setup by training and evaluating on the synthetic datasets. To do so, run:
 
 ```bash
 cd ~/repos/dragon_submission
@@ -64,9 +64,9 @@ cd ~/repos/dragon_submission
 
 Note: testing also runs a build, so running the build command separately is optional (if you are certain that everything is set up correctly).
 
-Testing involves running your algorithm on nine synthetic datasets provided in the `./test-input/` folder. It will then check the test predictions produced by your algorithm against the labels and display the performance. Since training is typically not deterministic (even with the same random seed across different hardware), we don't compare against pre-computed test predictions. Instead, we check if all training runs perform better than random guessing. If all tests have been completed successfully, you're good to go!
+Testing involves fine-tuning your algorithm on the nine synthetic datasets provided in the [`test-input`](/test-input) folder. It will then generate and check the test predictions produced by your algorithm against the labels and display the performance. Since training is typically not deterministic (even with the same random seed across different hardware), we don't compare against pre-computed test predictions. Instead, we print the performance and ask you to check if all training runs perform better than random guessing. If this is successful, you're good to go!
 
-If you want to adapt the hardware (e.g., run on CPU instead of GPU, or allow more/less RAM, CPU cores, etc.) you can adapt the `test.sh` file.
+If you want to adapt the hardware (e.g., run on CPU instead of GPU, or allow more/less RAM, CPU cores, etc.) you can adapt the [`test.sh`](/test.sh) file.
 
 
 ### Working in an IDE (e.g., Visual Studio Code)
@@ -79,21 +79,20 @@ cd ~/repos/dragon_submission
 pip install -r requirements.txt
 ```
 
-This was tested on Ubuntu 22.04. If you have issues installing the `requirements.txt`, you can try the adapted variant below. This should install all requirements, but doesn't fully specify all versions and dependencies:
+This was tested on Ubuntu 22.04. If you have issues installing the [`requirements.txt`](/requirements.txt), you can try the adapted variant below. This should install all requirements, but doesn't fully specify all versions and dependencies:
 
 ```bash
 cd ~/repos/dragon_submission
-pip install torch xformers==0.0.21
 pip install -r requirements.in
 ```
 
-If this was all successful, you can open the repository in an IDE and select the `dragon_submission` environment to run the code in.
+If this was all successful, you can open the repository in an IDE and select the `dragon_submission` environment to run the code in. When running on Mac, xformers version 0.0.21 may work better (`pip install xformers==0.0.21`).
 
-To validate the setup works as intended, run the `test.py` script to train on the synthetic datasets. This will fine-tune the `distilbert-base-multilingual-cased` for each of the nine synthetic debugging datasets, so this can take a while.
+To validate the setup works as intended, run the `test.py` script to train on the synthetic datasets. This will fine-tune the model for each of the nine synthetic debugging datasets, so this can take a while.
 
 
 ## Developing Your Own Solution
-After the setup above you're good to go to implement your own AI algorithm! The most logical place to start adapting is the `process.py` script, there are two example alterations provided there too. Any additional imported packages should be added to `./requirements.txt`, and any additional files and folders should be explicitly copied through commands in the `./Dockerfile`. 
+After the setup above you're good to go to implement your own AI algorithm! The most logical place to start adapting is the [`process.py`](/process.py) script, there are two example alterations provided there too. Any additional imported packages should be added to [`requirements.txt`](/requirements.txt), and any additional files and folders should be explicitly copied through commands in the [`Dockerfile`](/Dockerfile). 
 
 To update your algorithm on Grand Challenge, you can test your new Docker container, after which you can update the forked repository and **tag** it (following the instructions
 <a href="https://grand-challenge.org/documentation/linking-a-github-repository-to-your-algorithm/" target="_blank">here</a>).
