@@ -194,7 +194,7 @@ class DragonBaseline(NLPAlgorithm):
         self.gradient_checkpointing = False
         self.max_seq_length = 512
         self.learning_rate = 1e-5
-        self.num_train_epochs = 1
+        self.num_train_epochs = 5
         self.warmup_ratio = 0.1
         self.load_best_model_at_end = True
         self.metric_for_best_model = "loss"
