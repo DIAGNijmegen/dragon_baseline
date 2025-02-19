@@ -174,7 +174,12 @@ class NLPAlgorithm(ClassificationAlgorithm):
         self.df_test: pd.DataFrame = None  # loaded in self.load()
         self.task: TaskDetails = None  # loaded in self.load()
         self.label_scalers: Dict[str, TransformerMixin] = {}  # set in self.scale_labels()
-        self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        if torch.cuda.is_available():
+            self.device = torch.device("cuda:0")
+        elif torch.backends.mps.is_available():
+            self.device = torch.device("mps:0")
+        else:
+            self.device = torch.device("cpu")
 
         # paths
         self.dataset_train_path = self._input_path / "nlp-training-dataset.json"

@@ -175,7 +175,7 @@ def balance_negative_samples(df: pd.DataFrame, label_name: str, seed: int) -> pd
 
 
 class DragonBaseline(NLPAlgorithm):
-    def __init__(self, input_path: Path = Path("/input"), output_path: Path = Path("/output"), workdir: Path = Path("/opt/app"), model_name: Union[str, Path] = "distilbert-base-multilingual-cased", **kwargs):
+    def __init__(self, input_path: Union[Path, str] = Path("/input"), output_path: Union[Path, str] = Path("/output"), workdir: Union[Path, str] = Path("/opt/app"), model_name: Union[str, Path] = "distilbert-base-multilingual-cased", **kwargs):
         """
         Baseline implementation for the DRAGON Challenge (https://dragon.grand-challenge.org/).
         This baseline uses the HuggingFace Transformers library (https://huggingface.co/transformers/).
@@ -185,6 +185,10 @@ class DragonBaseline(NLPAlgorithm):
         - `train`: train the model
         - `predict`: predict the labels for the test data
         """
+        input_path = Path(input_path)
+        output_path = Path(output_path)
+        workdir = Path(workdir)
+
         super().__init__(input_path=input_path, output_path=output_path, **kwargs)
 
         # default training settings
@@ -198,7 +202,7 @@ class DragonBaseline(NLPAlgorithm):
         self.warmup_ratio = 0.1
         self.load_best_model_at_end = True
         self.metric_for_best_model = "loss"
-        self.fp16 = True
+        self.fp16 = (True if self.device.type == "cuda" else False)
         self.create_strided_training_examples = True
 
         # paths for saving the preprocessed data and model checkpoints
