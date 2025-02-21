@@ -30,6 +30,10 @@ Please see the [dedicated development guide](documentation/development_guide.md)
 The DRAGON benchmark serves as an extensive resource for testing and advancing clinical NLP algorithms, particularly in the realm of automated data curation. In the context of medical imaging datasets, data curation involves selecting relevant studies, collecting key measurements, and determining the clinical outcomes as labels. Clinical reports are the primary source for these curation tasks. The DRAGON benchmark aims to catalyze the development of algorithms capable of addressing a broad spectrum of data curation tasks and introduces 28 clinically relevant tasks, as detailed [here](https://dragon.grand-challenge.org/tasks/).
 
 
+## Accessing the reports in the DRAGON benchmark
+All data, including clinical reports and associated labels, are stored in a sequestered manner on the Grand Challenge platform. This prevents users from directly accessing or viewing the data, preserving patient privacy by design. While participants cannot directly download or see the data, they do have full functional access for model training and validation through the platform interface. Keeping the test labels hidden helps to mitigate potential biases. To aid the development of solutions we provide synthetic datasets (see the [development guide](documentation/development_guide.md)) for all task types and provide an example case for each of the tasks in the DRAGON manuscript and <a href="https://github.com/DIAGNijmegen/dragon_sample_reports" target="_blank">here</a>.
+
+
 ## What can the DRAGON algorithm do for you?
 If you are a domain scientist (radiologist, pathologist, ...) looking to automate your own data curation, the DRAGON algorithm provides an out-of-the-box solution that is all but guaranteed to provide excellent results on your individual dataset. Simply convert your dataset into the DRAGON format and enjoy the power of AI - no expertise required!
 
@@ -73,7 +77,11 @@ To format your own dataset for usage with the algorithms from the DRAGON challen
 
 
 ## Where does the DRAGON baseline perform well and where does it not perform?
-Pending evaluation on the DRAGON benchmark.
+The DRAGON baseline methods have been evaluated on the <a href="https://dragon.grand-challenge.org/evaluation/test/leaderboard/" target="_blank">DRAGON test set</a>, as prespecified in the <a href="https://zenodo.org/records/10374512" target="_blank">DRAGON Statistical Analysis Plan</a>.
+
+Model performance for the best model (<a href="https://dragon.grand-challenge.org/evaluation/ccb4ad0e-fdfa-49d0-af77-fcc61810c5f6/" target="_blank">RoBERTa large with domain-specific pretraining</a>) was excellent for 10/28 tasks (T1, T2, T4, T5, T10, T15, T16, T19, T20, T21), good for 8/28 tasks (T3, T7, T11, T22, T23, T25, T26, T27), moderate for 6/28 tasks (T9, T13, T17, T18, T24, T28) and poor for 4/28 tasks (T6, T8, T12, T14), based on pre-defined performance thresholds.
+
+For the full performance breakdown of each model, see the [evaluation results](documentation/evaluation_results.md).
 
 ## Managed By
 Diagnostic Image Analysis Group, Radboud University Medical Center, Nijmegen, The Netherlands
