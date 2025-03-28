@@ -198,8 +198,12 @@ class NLPAlgorithm(ClassificationAlgorithm):
         self.save(predictions)
         self.verify_predictions()
 
-    def load_dataset(self, path: Path) -> pd.DataFrame:
+    def load_dataset(self, path: Path) -> Union[pd.DataFrame, None]:
         """Load a dataset."""
+        if not path.exists():
+            print(f"Path '{path}' does not exist, skipping loading")
+            return None
+
         df = pd.read_json(path, dtype={"uid": str})
 
         # cast and validate algorithm inputs
