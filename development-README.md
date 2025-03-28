@@ -21,9 +21,8 @@ pip install -r requirements_dev.txt
 Perform tests:
 
 ```
-pytest
-mypy src
-flake8 src
+./build.sh
+./test.sh
 ```
 
 # Programming conventions
