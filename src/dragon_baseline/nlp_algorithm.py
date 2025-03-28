@@ -22,7 +22,6 @@ from typing import Dict, List, Union
 import numpy as np
 import pandas as pd
 import torch
-from evalutils import ClassificationAlgorithm
 from sklearn.base import TransformerMixin
 
 
@@ -155,18 +154,16 @@ class TaskDetails:
         )
 
 
-class NLPAlgorithm(ClassificationAlgorithm):
-    def __init__(self, **kwargs):
+class NLPAlgorithm:
+    def __init__(self, input_path: Path = Path("/input"), output_path: Path = Path("/output")):
         """
         The base class for NLP algorithms. Sets the environment and controls
         the flow of the processing once `process` is called.
 
         Args:
             input_path (Path): Path to the data folder. Default: `/input`
-            output_path (Path): Path where the output predictions will be written. Default: `/output/images`
+            output_path (Path): Path where the output predictions will be written. Default: `/output`
         """
-
-        super().__init__(index_key="input_json", **kwargs)
 
         # defaults
         self.df_train: pd.DataFrame = None  # loaded in self.load()
@@ -182,6 +179,8 @@ class NLPAlgorithm(ClassificationAlgorithm):
             self.device = torch.device("cpu")
 
         # paths
+        self._input_path = input_path
+        self._output_path = output_path
         self.dataset_train_path = self._input_path / "nlp-training-dataset.json"
         self.dataset_val_path = self._input_path / "nlp-validation-dataset.json"
         self.dataset_test_path = self._input_path / "nlp-test-dataset.json"
