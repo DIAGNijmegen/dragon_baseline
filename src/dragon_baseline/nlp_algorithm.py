@@ -35,6 +35,7 @@ class ProblemType(Enum):
     MULTI_LABEL_MULTI_CLASS_CLASSIFICATION = "multi_label_multi_class_classification"
     SINGLE_LABEL_NER = "named_entity_recognition"
     MULTI_LABEL_NER = "multi_label_named_entity_recognition"
+    SINGLE_LABEL_TEXT = "text"
 
 
 def string_to_ProblemType(type_str):
@@ -238,6 +239,8 @@ class NLPAlgorithm:
                 df[target.label_name] = df[target.label_name].apply(lambda x: [str(value) for value in x])
             elif target.problem_type == ProblemType.MULTI_LABEL_NER:
                 df[target.label_name] = df[target.label_name].apply(lambda x: [[str(val) for val in value] for value in x])
+            elif target.problem_type == ProblemType.SINGLE_LABEL_TEXT:
+                df[target.label_name] = df[target.label_name].astype(str)
             else:
                 raise ValueError(f"Unexpected problem type '{target.problem_type}'")
 
@@ -384,5 +387,9 @@ class NLPAlgorithm:
                 raise ValueError(f"Expected values in column '{col}' to be a list")
             if not all(isinstance(value, float) for value in df[col].explode()):
                 raise ValueError(f"Expected values in column '{col}' to be a list of floats")
+        elif self.task.target.problem_type == ProblemType.SINGLE_LABEL_TEXT:
+            # check if all values are a string
+            if not all(isinstance(value, str) for value in df[col]):
+                raise ValueError(f"Expected values in column '{col}' to be a string")
         else:
             raise ValueError(f"Unexpected problem type '{self.task.target.problem_type}'")
