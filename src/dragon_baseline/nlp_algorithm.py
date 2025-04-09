@@ -14,10 +14,11 @@
 
 import json
 from abc import abstractmethod
+from copy import deepcopy
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
-from typing import Dict, List, Union
+from typing import Any, Dict, List, Union
 
 import numpy as np
 import pandas as pd
@@ -294,6 +295,52 @@ class NLPAlgorithm:
         """Save the predictions."""
         self.test_predictions_path.parent.mkdir(parents=True, exist_ok=True)
         predictions.to_json(self.test_predictions_path, orient="records")
+
+    def cast_predictions(self, predictions: dict[str, Any]) -> dict[str, Any]:
+        """Cast the predictions.
+
+        The predictions need to satisfy the following:
+        - contain a "uid" column that matches the test data.
+        - contain a column with the predictions (named after the problem_type).
+        - the values in each label column must be valid.
+
+        This function tries to cast the predictions to the expected type.
+        """
+        predictions = deepcopy(predictions)
+        key = self.task.target.prediction_name
+
+        for entry in predictions:
+            if self.task.target.problem_type == ProblemType.SINGLE_LABEL_NER:
+                # convert predictions to a list of strings
+                entry[key] = [str(value) for value in entry[key]]
+            elif self.task.target.problem_type == ProblemType.MULTI_LABEL_NER:
+                # convert predictions to a list of lists of strings
+                entry[key] = [[str(value) for value in value] for value in entry[key]]
+            elif self.task.target.problem_type == ProblemType.SINGLE_LABEL_BINARY_CLASSIFICATION:
+                # convert predictions to a float
+                entry[key] = float(entry[key])
+            elif self.task.target.problem_type == ProblemType.MULTI_LABEL_BINARY_CLASSIFICATION:
+                # convert predictions to a list of floats
+                entry[key] = [float(value) for value in entry[key]]
+            elif self.task.target.problem_type == ProblemType.SINGLE_LABEL_MULTI_CLASS_CLASSIFICATION:
+                # convert predictions to string
+                entry[key] = str(entry[key])
+            elif self.task.target.problem_type == ProblemType.MULTI_LABEL_MULTI_CLASS_CLASSIFICATION:
+                # convert predictions to a list of strings
+                entry[key] = [str(value) for value in entry[key]]
+            elif self.task.target.problem_type == ProblemType.SINGLE_LABEL_REGRESSION:
+                # convert predictions to a float
+                entry[key] = float(entry[key])
+            elif self.task.target.problem_type == ProblemType.MULTI_LABEL_REGRESSION:
+                # convert predictions to a list of floats
+                entry[key] = [float(value) for value in entry[key]]
+            elif self.task.target.problem_type == ProblemType.SINGLE_LABEL_TEXT:
+                # convert predictions to a string
+                entry[key] = str(entry[key])
+            else:
+                raise ValueError(f"Unexpected problem type '{self.task.target.problem_type}'")
+
+        return predictions
 
     def verify_predictions(self):
         """Verify the predictions.
