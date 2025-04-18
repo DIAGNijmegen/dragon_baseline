@@ -414,7 +414,7 @@ class NLPAlgorithm:
                 raise ValueError(f"Expected values in column '{col}' to be a string")
             # check if all values are in the list of possible values
             if not all(value in self.task.target.values for value in df[col]):
-                raise ValueError(f"Expected values in column '{col}' to be in {self.task.target.values}")
+                print(f"Expected values in column '{col}' to be in {self.task.target.values}")
         elif self.task.target.problem_type == ProblemType.MULTI_LABEL_MULTI_CLASS_CLASSIFICATION:
             # check if all values are a list of strings
             if not all(isinstance(value, list) for value in df[col]):
@@ -423,7 +423,7 @@ class NLPAlgorithm:
                 raise ValueError(f"Expected values in column '{col}' to be a list of strings")
             # check if all values are in the list of possible values
             if not all(value in self.task.target.values for value in df[col].explode()):
-                raise ValueError(f"Expected values in column '{col}' to be in {self.task.target.values}")
+                print(f"Expected values in column '{col}' to be in {self.task.target.values}")
         elif self.task.target.problem_type == ProblemType.SINGLE_LABEL_REGRESSION:
             # check if all values are a float
             if not all(isinstance(value, float) for value in df[col]):
